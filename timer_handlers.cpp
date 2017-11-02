@@ -183,7 +183,7 @@ void UI_Mainwindow::vertOffsDial_timer_handler()
 
   chn = devparms.activechannel;
 
-  sprintf(str, ":CHAN%i:OFFS %e", chn + 1, devparms.chanoffset[chn]);
+  sprintf(str, ":CHAN%i:OFFS %e", chn + 1, devparms.chan[chn].offset);
 
   set_cue_cmd(str);
 }
@@ -219,7 +219,7 @@ void UI_Mainwindow::vertScaleDial_timer_handler()
 
   chn = devparms.activechannel;
 
-  sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chanscale[chn]);
+  sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chan[chn].scale);
 
   set_cue_cmd(str);
 }

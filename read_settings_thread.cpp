@@ -112,15 +112,15 @@ void read_settings_thread::run()
 
     if(!strcmp(device->buf, "20M"))
     {
-      devparms->chanbwlimit[chn] = 20;
+      devparms->chan[chn].bwlimit = 20;
     }
     else if(!strcmp(device->buf, "250M"))
       {
-        devparms->chanbwlimit[chn] = 250;
+        devparms->chan[chn].bwlimit = 250;
       }
       else if(!strcmp(device->buf, "OFF"))
         {
-          devparms->chanbwlimit[chn] = 0;
+          devparms->chan[chn].bwlimit = 0;
         }
         else
         {
@@ -144,26 +144,18 @@ void read_settings_thread::run()
       goto GDS_OUT_ERROR;
     }
 
-    if(!strcmp(device->buf, "AC"))
-    {
-      devparms->chancoupling[chn] = 2;
+    if(!strcmp(device->buf, "AC")) {
+      devparms->chan[chn].coupling = 2;
+    } else if(!strcmp(device->buf, "DC")) {
+      devparms->chan[chn].coupling = 1;
+    } else if(!strcmp(device->buf, "GND")) {
+      devparms->chan[chn].coupling = 0;
+    } else {
+      line = __LINE__;
+      goto GDS_OUT_ERROR;
     }
-    else if(!strcmp(device->buf, "DC"))
-      {
-        devparms->chancoupling[chn] = 1;
-      }
-      else if(!strcmp(device->buf, "GND"))
-        {
-          devparms->chancoupling[chn] = 0;
-        }
-        else
-        {
-          line = __LINE__;
-          goto GDS_OUT_ERROR;
-        }
 
     sprintf(str, ":CHAN%i:DISP?", chn + 1);
-
     usleep(TMC_GDS_DELAY);
 
     if(tmc_write(str) != 12)
@@ -180,11 +172,11 @@ void read_settings_thread::run()
 
     if(!strcmp(device->buf, "0"))
     {
-      devparms->chandisplay[chn] = 0;
+      devparms->chan[chn].display = 0;
     }
     else if(!strcmp(device->buf, "1"))
       {
-        devparms->chandisplay[chn] = 1;
+        devparms->chan[chn].display = 1;
 
         if(devparms->activechannel == -1)
         {
@@ -217,11 +209,11 @@ void read_settings_thread::run()
 
       if(!strcmp(device->buf, "OMEG"))
       {
-        devparms->chanimpedance[chn] = 0;
+        devparms->chan[chn].impedance = 0;
       }
       else if(!strcmp(device->buf, "FIFT"))
         {
-          devparms->chanimpedance[chn] = 1;
+          devparms->chan[chn].impedance = 1;
         }
         else
         {
@@ -248,11 +240,11 @@ void read_settings_thread::run()
 
     if(!strcmp(device->buf, "0"))
     {
-      devparms->chaninvert[chn] = 0;
+      devparms->chan[chn].invert = 0;
     }
     else if(!strcmp(device->buf, "1"))
       {
-        devparms->chaninvert[chn] = 1;
+        devparms->chan[chn].invert = 1;
       }
       else
       {
@@ -276,7 +268,7 @@ void read_settings_thread::run()
       goto GDS_OUT_ERROR;
     }
 
-    devparms->chanoffset[chn] = atof(device->buf);
+    devparms->chan[chn].offset = atof(device->buf);
 
     sprintf(str, ":CHAN%i:PROB?", chn + 1);
 
@@ -294,7 +286,7 @@ void read_settings_thread::run()
       goto GDS_OUT_ERROR;
     }
 
-    devparms->chanprobe[chn] = atof(device->buf);
+    devparms->chan[chn].probe = atof(device->buf);
 
     sprintf(str, ":CHAN%i:UNIT?", chn + 1);
 
@@ -314,23 +306,23 @@ void read_settings_thread::run()
 
     if(!strcmp(device->buf, "VOLT"))
     {
-      devparms->chanunit[chn] = 0;
+      devparms->chan[chn].unit = 0;
     }
     else if(!strcmp(device->buf, "WATT"))
       {
-        devparms->chanunit[chn] = 1;
+        devparms->chan[chn].unit = 1;
       }
       else if(!strcmp(device->buf, "AMP"))
         {
-          devparms->chanunit[chn] = 2;
+          devparms->chan[chn].unit = 2;
         }
         else if(!strcmp(device->buf, "UNKN"))
           {
-            devparms->chanunit[chn] = 3;
+            devparms->chan[chn].unit = 3;
           }
           else
           {
-            devparms->chanunit[chn] = 0;
+            devparms->chan[chn].unit = 0;
           }
 
     sprintf(str, ":CHAN%i:SCAL?", chn + 1);
@@ -349,7 +341,7 @@ void read_settings_thread::run()
       goto GDS_OUT_ERROR;
     }
 
-    devparms->chanscale[chn] = atof(device->buf);
+    devparms->chan[chn].scale = atof(device->buf);
 
     sprintf(str, ":CHAN%i:VERN?", chn + 1);
 
@@ -369,11 +361,11 @@ void read_settings_thread::run()
 
     if(!strcmp(device->buf, "0"))
     {
-      devparms->chanvernier[chn] = 0;
+      devparms->chan[chn].vernier = false;
     }
     else if(!strcmp(device->buf, "1"))
       {
-        devparms->chanvernier[chn] = 1;
+        devparms->chan[chn].vernier = true;
       }
       else
       {
@@ -1540,7 +1532,7 @@ void read_settings_thread::run()
     }
     else
     {
-      devparms->fft_vscale = atof(device->buf) * devparms->chanscale[devparms->math_fft_src];
+      devparms->fft_vscale = atof(device->buf) * devparms->chan[devparms->math_fft_src].scale;
     }
   }
   else

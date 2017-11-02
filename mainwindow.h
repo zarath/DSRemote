@@ -95,7 +95,8 @@
 #include "playback_dialog.h"
 
 #include "third_party/kiss_fft/kiss_fftr.h"
-
+#include <QString>
+#include <QtGlobal>
 
 class SignalCurve;
 
@@ -366,6 +367,7 @@ private slots:
   void chan_bwl_250();
   void chan_invert_on();
   void chan_invert_off();
+  void chan_probe_X(const char *name, const double value);
   void chan_probe_001();
   void chan_probe_002();
   void chan_probe_005();

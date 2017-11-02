@@ -229,7 +229,7 @@ void UI_Mainwindow::get_deep_memory_waveform(void)
 
   for(i=0; i<MAX_CHNS; i++)
   {
-    if(!devparms.chandisplay[i])
+    if(!devparms.chan[i].display)
     {
       continue;
     }
@@ -251,7 +251,7 @@ void UI_Mainwindow::get_deep_memory_waveform(void)
 
   for(i=0; i<MAX_CHNS; i++)
   {
-    if(!devparms.chandisplay[i])  // Download data only when channel is switched on
+    if(!devparms.chan[i].display)  // Download data only when channel is switched on
     {
       continue;
     }
@@ -270,7 +270,7 @@ void UI_Mainwindow::get_deep_memory_waveform(void)
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!devparms.chandisplay[chn])  // Download data only when channel is switched on
+    if(!devparms.chan[chn].display)  // Download data only when channel is switched on
     {
       continue;
     }
@@ -437,7 +437,7 @@ void UI_Mainwindow::get_deep_memory_waveform(void)
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!devparms.chandisplay[chn])
+    if(!devparms.chan[chn].display)
     {
       continue;
     }
@@ -522,7 +522,7 @@ OUT_ERROR:
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!devparms.chandisplay[chn])
+    if(!devparms.chan[chn].display)
     {
       continue;
     }
@@ -583,7 +583,7 @@ void UI_Mainwindow::save_wave_inspector_buffer_to_edf(struct device_settings *d_
 
   for(i=0; i<MAX_CHNS; i++)
   {
-    if(!d_parms->chandisplay[i])
+    if(!d_parms->chan[i].display)
     {
       continue;
     }
@@ -649,7 +649,7 @@ void UI_Mainwindow::save_wave_inspector_buffer_to_edf(struct device_settings *d_
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!d_parms->chandisplay[chn])
+    if(!d_parms->chan[chn].display)
     {
       continue;
     }
@@ -657,7 +657,7 @@ void UI_Mainwindow::save_wave_inspector_buffer_to_edf(struct device_settings *d_
     edf_set_samplefrequency(hdl, j, smps_per_record);
     edf_set_digital_maximum(hdl, j, 32767);
     edf_set_digital_minimum(hdl, j, -32768);
-    if(d_parms->chanscale[chn] > 2)
+    if(d_parms->chan[chn].scale > 2)
     {
       edf_set_physical_maximum(hdl, j, d_parms->yinc[chn] * 32767.0 / 32.0);
       edf_set_physical_minimum(hdl, j, d_parms->yinc[chn] * -32768.0 / 32.0);
@@ -827,7 +827,7 @@ void UI_Mainwindow::save_screen_waveform()
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!devparms.chandisplay[chn])  // Download data only when channel is switched on
+    if(!devparms.chan[chn].display)  // Download data only when channel is switched on
     {
       continue;
     }
@@ -850,7 +850,7 @@ void UI_Mainwindow::save_screen_waveform()
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!devparms.chandisplay[chn])  // Download data only when channel is switched on
+    if(!devparms.chan[chn].display)  // Download data only when channel is switched on
     {
       continue;
     }
@@ -993,7 +993,7 @@ void UI_Mainwindow::save_screen_waveform()
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!devparms.chandisplay[chn])
+    if(!devparms.chan[chn].display)
     {
       continue;
     }
@@ -1001,7 +1001,7 @@ void UI_Mainwindow::save_screen_waveform()
     edf_set_samplefrequency(hdl, j, n);
     edf_set_digital_maximum(hdl, j, 32767);
     edf_set_digital_minimum(hdl, j, -32768);
-    if(devparms.chanscale[chn] > 2)
+    if(devparms.chan[chn].scale > 2)
     {
       edf_set_physical_maximum(hdl, j, devparms.yinc[chn] * 32767.0 / 32.0);
       edf_set_physical_minimum(hdl, j, devparms.yinc[chn] * -32768.0 / 32.0);
@@ -1023,7 +1023,7 @@ void UI_Mainwindow::save_screen_waveform()
 
   for(chn=0; chn<MAX_CHNS; chn++)
   {
-    if(!devparms.chandisplay[chn])
+    if(!devparms.chan[chn].display)
     {
       continue;
     }

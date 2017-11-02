@@ -131,17 +131,20 @@ struct device_settings
   int channel_cnt;              // Device has 2 or 4 channels
   int bandwidth;                // Bandwidth in MHz
 
-  int chanbwlimit[MAX_CHNS];    // 20, 250 or 0MHz (off)
-  int chancoupling[MAX_CHNS];   // 0=GND, 1=DC, 2=AC
-  int chandisplay[MAX_CHNS];    // 0=off, 1=on
-  int chanimpedance[MAX_CHNS];  // 0=1MOhm, 1=50Ohm
-  int chaninvert[MAX_CHNS];     // 0=normal, 1=inverted
-  int chanunit[MAX_CHNS];       // 0=V, 1=W, 2=A, 3=U
-  char chanunitstr[4][2];
-  double chanoffset[MAX_CHNS];  // expressed in volts
-  double chanprobe[MAX_CHNS];   // Probe attenuation ratio e.g. 10:1
-  double chanscale[MAX_CHNS];
-  int chanvernier[MAX_CHNS];    // Vernier 1=on, 0=off (fine adjustment of vertical scale)
+  struct channel {
+     int bwlimit;    // 20, 250 or 0MHz (off)
+     int coupling;   // 0=GND, 1=DC, 2=AC
+     int display;    // 0=off, 1=on
+     int impedance;  // 0=1MOhm, 1=50Ohm
+     bool invert;     // false=normal, true=inverted
+     int unit;       // 0=V, 1=W, 2=A, 3=U
+     char unitstr[2];
+     double offset;  // expressed in volts
+     double probe;   // Probe attenuation ratio e.g. 10:1
+     double scale;
+     bool vernier;    // Vernier true=on, false=off (fine adjustment of vertical scale)
+  } chan[MAX_CHNS];
+
   int activechannel;            // Last pressed channel button (used to know at which channel to apply scale change)
 
   double timebaseoffset;        // Main timebase offset in Sec

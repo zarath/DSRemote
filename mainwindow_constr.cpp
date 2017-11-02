@@ -67,14 +67,14 @@ UI_Mainwindow::UI_Mainwindow()
   for(i=0; i<MAX_CHNS; i++)
   {
     devparms.wavebuf[i] = (short *)malloc(WAVFRM_MAX_BUFSZ * sizeof(short));
-
-    devparms.chanscale[i] = 1;
+    devparms.chan[i].scale = 1;
   }
 
-  strcpy(devparms.chanunitstr[0], "V");
-  strcpy(devparms.chanunitstr[1], "W");
-  strcpy(devparms.chanunitstr[2], "A");
-  strcpy(devparms.chanunitstr[3], "U");
+  // TODO: is this right?
+  strcpy(devparms.chan[0].unitstr, "V");
+  strcpy(devparms.chan[1].unitstr, "W");
+  strcpy(devparms.chan[2].unitstr, "A");
+  strcpy(devparms.chan[3].unitstr, "U");
 
   devparms.fftbuf_in = (double *)malloc(FFT_MAX_BUFSZ * sizeof(double));
 

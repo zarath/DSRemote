@@ -358,7 +358,7 @@ void SignalCurve::drawWidget(QPainter *painter, int curve_w, int curve_h)
 
   for(chn=0; chn<devparms->channel_cnt; chn++)
   {
-    if(!devparms->chandisplay[chn])
+    if(!devparms->chan[chn].display)
     {
       continue;
     }
@@ -369,7 +369,9 @@ void SignalCurve::drawWidget(QPainter *painter, int curve_w, int curve_h)
     }
     else
     {
-      chan_arrow_pos[chn] =  (curve_h / 2) - (devparms->chanoffset[chn] / ((devparms->chanscale[chn] * devparms->vertdivisions) / curve_h));
+      chan_arrow_pos[chn] = (curve_h / 2) -
+                            (devparms->chan[chn].offset /
+                            ((devparms->chan[chn].scale * devparms->vertdivisions) / curve_h));
 
       if(chan_arrow_pos[chn] < 0)
       {
@@ -429,7 +431,7 @@ void SignalCurve::drawWidget(QPainter *painter, int curve_w, int curve_h)
         chns_done = 1;
       }
 
-      if(!devparms->chandisplay[chn])
+      if(!devparms->chan[chn].display)
       {
         continue;
       }
@@ -494,7 +496,10 @@ void SignalCurve::drawWidget(QPainter *painter, int curve_w, int curve_h)
   {
     if(devparms->triggeredgesource < 4)
     {
-      trig_level_arrow_pos = (curve_h / 2) - ((devparms->triggeredgelevel[devparms->triggeredgesource] + devparms->chanoffset[devparms->triggeredgesource]) / ((devparms->chanscale[devparms->triggeredgesource] * devparms->vertdivisions) / curve_h));
+      trig_level_arrow_pos = (curve_h / 2) -
+                             ((devparms->triggeredgelevel[devparms->triggeredgesource] +
+                               devparms->chan[devparms->triggeredgesource].offset) /
+                               ((devparms->chan[devparms->triggeredgesource].scale * devparms->vertdivisions) / curve_h));
 
       if(trig_level_arrow_pos < 0)
       {
@@ -584,39 +589,39 @@ void SignalCurve::drawWidget(QPainter *painter, int curve_w, int curve_h)
   {
     convert_to_metric_suffix(str, devparms->triggeredgelevel[devparms->triggeredgesource], 2);
 
-    strcat(str, devparms->chanunitstr[devparms->chanunit[devparms->triggeredgesource]]);
+    strcat(str, devparms->chan[devparms->chan[devparms->triggeredgesource].unit].unitstr);
 
     paintLabel(painter, curve_w - 120, curve_h - 50, 100, 20, str, QColor(255, 128, 0));
   }
   else if(label_active == LABEL_ACTIVE_CHAN1)
     {
-      convert_to_metric_suffix(str, devparms->chanoffset[0], 2);
+      convert_to_metric_suffix(str, devparms->chan[0].offset, 2);
 
-      strcat(str, devparms->chanunitstr[devparms->chanunit[0]]);
+      strcat(str, devparms->chan[devparms->chan[0].unit].unitstr);
 
       paintLabel(painter, 20, curve_h - 50, 100, 20, str, SignalColor[0]);
     }
     else if(label_active == LABEL_ACTIVE_CHAN2)
       {
-        convert_to_metric_suffix(str, devparms->chanoffset[1], 2);
+        convert_to_metric_suffix(str, devparms->chan[1].offset, 2);
 
-        strcat(str, devparms->chanunitstr[devparms->chanunit[1]]);
+        strcat(str, devparms->chan[devparms->chan[1].unit].unitstr);
 
         paintLabel(painter, 20, curve_h - 50, 100, 20, str, SignalColor[1]);
       }
       else if(label_active == LABEL_ACTIVE_CHAN3)
         {
-          convert_to_metric_suffix(str, devparms->chanoffset[2], 2);
+          convert_to_metric_suffix(str, devparms->chan[2].offset, 2);
 
-          strcat(str, devparms->chanunitstr[devparms->chanunit[2]]);
+          strcat(str, devparms->chan[devparms->chan[2].unit].unitstr);
 
           paintLabel(painter, 20, curve_h - 50, 100, 20, str, SignalColor[2]);
         }
         else if(label_active == LABEL_ACTIVE_CHAN4)
           {
-            convert_to_metric_suffix(str, devparms->chanoffset[3], 2);
+            convert_to_metric_suffix(str, devparms->chan[3].offset, 2);
 
-            strcat(str, devparms->chanunitstr[devparms->chanunit[3]]);
+            strcat(str, devparms->chan[devparms->chan[3].unit].unitstr);
 
             paintLabel(painter, 20, curve_h - 50, 100, 20, str, SignalColor[3]);
           }
@@ -796,7 +801,7 @@ void SignalCurve::drawFFT(QPainter *painter, int curve_h_b, int curve_w_b)
     return;
   }
 
-  if((devparms->fftbufsz > 32) && devparms->chandisplay[devparms->math_fft_src])
+  if((devparms->fftbufsz > 32) && devparms->chan[devparms->math_fft_src].display)
   {
     painter->setClipping(true);
     painter->setClipRegion(QRegion(0, 0, curve_w, curve_h), Qt::ReplaceClip);
@@ -1154,7 +1159,7 @@ void SignalCurve::drawTopLabels(QPainter *painter)
 
   convert_to_metric_suffix(str, devparms->triggeredgelevel[devparms->triggeredgesource], 2);
 
-  strcat(str, devparms->chanunitstr[devparms->chanunit[devparms->triggeredgesource]]);
+  strcat(str, devparms->chan[devparms->chan[devparms->triggeredgesource].unit].unitstr);
 
   if(devparms->triggeredgesource < 4)
   {
@@ -1275,16 +1280,16 @@ void SignalCurve::drawChanLabel(QPainter *painter, int xpos, int ypos, int chn)
   str1[0] = '1' + chn;
   str1[1] = 0;
 
-  convert_to_metric_suffix(str2, devparms->chanscale[chn], 2);
+  convert_to_metric_suffix(str2, devparms->chan[chn].scale, 2);
 
-  strcat(str2, devparms->chanunitstr[devparms->chanunit[chn]]);
+  strcat(str2, devparms->chan[devparms->chan[chn].unit].unitstr);
 
-  if(devparms->chanbwlimit[chn])
+  if(devparms->chan[chn].bwlimit)
   {
     strcat(str2, " B");
   }
 
-  if(devparms->chandisplay[chn])
+  if(devparms->chan[chn].display)
   {
     if(chn == devparms->activechannel)
     {
@@ -1296,7 +1301,7 @@ void SignalCurve::drawChanLabel(QPainter *painter, int xpos, int ypos, int chn)
 
       painter->drawText(xpos + 6, ypos + 15, str1);
 
-      if(devparms->chaninvert[chn])
+      if(devparms->chan[chn].invert)
       {
         painter->drawLine(xpos + 6, ypos + 3, xpos + 14, ypos + 3);
       }
@@ -1313,32 +1318,20 @@ void SignalCurve::drawChanLabel(QPainter *painter, int xpos, int ypos, int chn)
 
       painter->drawText(xpos + 35, ypos + 1, 90, 20, Qt::AlignCenter, str2);
 
-      if(devparms->chancoupling[chn] == 0)
-      {
+      if(devparms->chan[chn].coupling == 0) {
         painter->drawLine(xpos + 33, ypos + 6, xpos + 33, ypos + 10);
-
         painter->drawLine(xpos + 28, ypos + 10, xpos + 38, ypos + 10);
-
         painter->drawLine(xpos + 30, ypos + 12, xpos + 36, ypos + 12);
-
         painter->drawLine(xpos + 32, ypos + 14, xpos + 34, ypos + 14);
+      } else if(devparms->chan[chn].coupling == 1) {
+        painter->drawLine(xpos + 28, ypos + 8, xpos + 38, ypos + 8);
+        painter->drawLine(xpos + 28, ypos + 12, xpos + 30, ypos + 12);
+        painter->drawLine(xpos + 32, ypos + 12, xpos + 34, ypos + 12);
+        painter->drawLine(xpos + 36, ypos + 12, xpos + 38, ypos + 12);
+      } else if(devparms->chan[chn].coupling == 2) {
+        painter->drawArc(xpos + 30, ypos + 8, 5, 5, 10 * 16, 160 * 16);
+        painter->drawArc(xpos + 35, ypos + 8, 5, 5, -10 * 16, -160 * 16);
       }
-      else if(devparms->chancoupling[chn] == 1)
-        {
-          painter->drawLine(xpos + 28, ypos + 8, xpos + 38, ypos + 8);
-
-          painter->drawLine(xpos + 28, ypos + 12, xpos + 30, ypos + 12);
-
-          painter->drawLine(xpos + 32, ypos + 12, xpos + 34, ypos + 12);
-
-          painter->drawLine(xpos + 36, ypos + 12, xpos + 38, ypos + 12);
-        }
-        else if(devparms->chancoupling[chn] == 2)
-          {
-            painter->drawArc(xpos + 30, ypos + 8, 5, 5, 10 * 16, 160 * 16);
-
-            painter->drawArc(xpos + 35, ypos + 8, 5, 5, -10 * 16, -160 * 16);
-          }
     }
     else
     {
@@ -1352,39 +1345,31 @@ void SignalCurve::drawChanLabel(QPainter *painter, int xpos, int ypos, int chn)
 
       painter->drawText(xpos + 6, ypos + 15, str1);
 
-      if(devparms->chaninvert[chn])
+      if(devparms->chan[chn].invert)
       {
         painter->drawLine(xpos + 6, ypos + 3, xpos + 14, ypos + 3);
       }
 
       painter->drawText(xpos + 35, ypos + 1, 90, 20, Qt::AlignCenter, str2);
 
-      if(devparms->chancoupling[chn] == 0)
-      {
-        painter->drawLine(xpos + 33, ypos + 6, xpos + 33, ypos + 10);
-
-        painter->drawLine(xpos + 28, ypos + 10, xpos + 38, ypos + 10);
-
-        painter->drawLine(xpos + 30, ypos + 12, xpos + 36, ypos + 12);
-
-        painter->drawLine(xpos + 32, ypos + 14, xpos + 34, ypos + 14);
-      }
-      else if(devparms->chancoupling[chn] == 1)
-        {
+      switch(devparms->chan[chn].coupling) {
+        case 0:
+          painter->drawLine(xpos + 33, ypos + 6, xpos + 33, ypos + 10);
+          painter->drawLine(xpos + 28, ypos + 10, xpos + 38, ypos + 10);
+          painter->drawLine(xpos + 30, ypos + 12, xpos + 36, ypos + 12);
+          painter->drawLine(xpos + 32, ypos + 14, xpos + 34, ypos + 14);
+          break;
+        case 1:
           painter->drawLine(xpos + 28, ypos + 8, xpos + 38, ypos + 8);
-
           painter->drawLine(xpos + 28, ypos + 12, xpos + 30, ypos + 12);
-
           painter->drawLine(xpos + 32, ypos + 12, xpos + 34, ypos + 12);
-
           painter->drawLine(xpos + 36, ypos + 12, xpos + 38, ypos + 12);
-        }
-        else if(devparms->chancoupling[chn] == 2)
-          {
-            painter->drawArc(xpos + 30, ypos + 8, 5, 5, 10 * 16, 160 * 16);
-
-            painter->drawArc(xpos + 35, ypos + 8, 5, 5, -10 * 16, -160 * 16);
-          }
+          break;
+        case 2:
+          painter->drawArc(xpos + 30, ypos + 8, 5, 5, 10 * 16, 160 * 16);
+          painter->drawArc(xpos + 35, ypos + 8, 5, 5, -10 * 16, -160 * 16);
+          break;
+      }
     }
   }
   else
@@ -1401,37 +1386,29 @@ void SignalCurve::drawChanLabel(QPainter *painter, int xpos, int ypos, int chn)
 
     painter->drawText(xpos + 30, ypos + 1, 85, 20, Qt::AlignCenter, str2);
 
-    if(devparms->chanbwlimit[chn])
+    if(devparms->chan[chn].bwlimit)
     {
       painter->drawText(xpos + 90, ypos + 1, 20, 20, Qt::AlignCenter, "B");
     }
 
-    if(devparms->chancoupling[chn] == 0)
-    {
-      painter->drawLine(xpos + 33, ypos + 6, xpos + 33, ypos + 10);
-
-      painter->drawLine(xpos + 28, ypos + 10, xpos + 38, ypos + 10);
-
-      painter->drawLine(xpos + 30, ypos + 12, xpos + 36, ypos + 12);
-
-      painter->drawLine(xpos + 32, ypos + 14, xpos + 34, ypos + 14);
-    }
-    else if(devparms->chancoupling[chn] == 1)
-      {
+    switch(devparms->chan[chn].coupling) {
+      case 0:
+        painter->drawLine(xpos + 33, ypos + 6, xpos + 33, ypos + 10);
+        painter->drawLine(xpos + 28, ypos + 10, xpos + 38, ypos + 10);
+        painter->drawLine(xpos + 30, ypos + 12, xpos + 36, ypos + 12);
+        painter->drawLine(xpos + 32, ypos + 14, xpos + 34, ypos + 14);
+        break;
+      case 1:
         painter->drawLine(xpos + 28, ypos + 8, xpos + 38, ypos + 8);
-
         painter->drawLine(xpos + 28, ypos + 12, xpos + 30, ypos + 12);
-
         painter->drawLine(xpos + 32, ypos + 12, xpos + 34, ypos + 12);
-
         painter->drawLine(xpos + 36, ypos + 12, xpos + 38, ypos + 12);
-      }
-      else if(devparms->chancoupling[chn] == 2)
-        {
-          painter->drawArc(xpos + 30, ypos + 8, 5, 5, 10 * 16, 160 * 16);
-
-          painter->drawArc(xpos + 35, ypos + 8, 5, 5, -10 * 16, -160 * 16);
-        }
+        break;
+      case 2:
+        painter->drawArc(xpos + 30, ypos + 8, 5, 5, 10 * 16, 160 * 16);
+        painter->drawArc(xpos + 35, ypos + 8, 5, 5, -10 * 16, -160 * 16);
+        break;
+    }
   }
 }
 
@@ -1734,7 +1711,7 @@ void SignalCurve::mousePressEvent(QMouseEvent *press_event)
       {
         for(chn=0; chn<devparms->channel_cnt; chn++)
         {
-          if(!devparms->chandisplay[chn])
+          if(!devparms->chan[chn].display)
           {
             continue;
           }
@@ -1934,18 +1911,19 @@ void SignalCurve::mouseReleaseEvent(QMouseEvent *release_event)
   //       printf("chanoffset[chn] is: %e   chanscale[chn] is %e   trig_level_arrow_pos is: %i   v_sense is: %e\n",
   //              devparms->chanoffset[chn], devparms->chanscale[chn], trig_level_arrow_pos, v_sense);
 
-      devparms->triggeredgelevel[devparms->triggeredgesource] = (((h / 2) - trig_level_arrow_pos) * ((devparms->chanscale[devparms->triggeredgesource] * devparms->vertdivisions) / h))
-                                                                - devparms->chanoffset[devparms->triggeredgesource];
+      devparms->triggeredgelevel[devparms->triggeredgesource] =
+          (((h / 2) - trig_level_arrow_pos) * ((devparms->chan[devparms->triggeredgesource].scale * devparms->vertdivisions) / h))
+                                                                - devparms->chan[devparms->triggeredgesource].offset;
 
-      tmp = devparms->triggeredgelevel[devparms->triggeredgesource] / (devparms->chanscale[devparms->triggeredgesource] / 50);
+      tmp = devparms->triggeredgelevel[devparms->triggeredgesource] / (devparms->chan[devparms->triggeredgesource].scale / 50);
 
-      devparms->triggeredgelevel[devparms->triggeredgesource] = (devparms->chanscale[devparms->triggeredgesource] / 50) * tmp;
+      devparms->triggeredgelevel[devparms->triggeredgesource] = (devparms->chan[devparms->triggeredgesource].scale / 50) * tmp;
 
       sprintf(str, "Trigger level: ");
 
       convert_to_metric_suffix(str + strlen(str), devparms->triggeredgelevel[devparms->triggeredgesource], 2);
 
-      strcat(str, devparms->chanunitstr[devparms->chanunit[devparms->triggeredgesource]]);
+      strcat(str, devparms->chan[devparms->chan[devparms->triggeredgesource].unit].unitstr);
 
       mainwindow->statusLabel->setText(str);
 
@@ -1959,7 +1937,7 @@ void SignalCurve::mouseReleaseEvent(QMouseEvent *release_event)
     {
       for(chn=0; chn<devparms->channel_cnt; chn++)
       {
-        if(!devparms->chandisplay[chn])
+        if(!devparms->chan[chn].display)
         {
           continue;
         }
@@ -1981,21 +1959,21 @@ void SignalCurve::mouseReleaseEvent(QMouseEvent *release_event)
     //       printf("chanoffset[chn] is: %e   chanscale[chn] is %e   chan_arrow_pos[chn] is: %i   v_sense is: %e\n",
     //              devparms->chanoffset[chn], devparms->chanscale[chn], chan_arrow_pos[chn], v_sense);
 
-          devparms->chanoffset[chn] = ((h / 2) - chan_arrow_pos[chn]) * ((devparms->chanscale[chn] * devparms->vertdivisions) / h);
+          devparms->chan[chn].offset = ((h / 2) - chan_arrow_pos[chn]) * ((devparms->chan[chn].scale * devparms->vertdivisions) / h);
 
-          tmp = devparms->chanoffset[chn] / (devparms->chanscale[chn] / 50);
+          tmp = devparms->chan[chn].offset / (devparms->chan[chn].scale / 50);
 
-          devparms->chanoffset[chn] = (devparms->chanscale[chn] / 50) * tmp;
+          devparms->chan[chn].offset = (devparms->chan[chn].scale / 50) * tmp;
 
           sprintf(str, "Channel %i offset: ", chn + 1);
 
-          convert_to_metric_suffix(str + strlen(str), devparms->chanoffset[chn], 3);
+          convert_to_metric_suffix(str + strlen(str), devparms->chan[chn].offset, 3);
 
-          strcat(str, devparms->chanunitstr[devparms->chanunit[chn]]);
+          strcat(str, devparms->chan[devparms->chan[chn].unit].unitstr);
 
           mainwindow->statusLabel->setText(str);
 
-          sprintf(str, ":CHAN%i:OFFS %e", chn + 1, devparms->chanoffset[chn]);
+          sprintf(str, ":CHAN%i:OFFS %e", chn + 1, devparms->chan[chn].offset);
 
           mainwindow->set_cue_cmd(str);
 
@@ -2112,12 +2090,13 @@ void SignalCurve::mouseMoveEvent(QMouseEvent *move_event)
         trig_level_arrow_pos = h;
       }
 
-      devparms->triggeredgelevel[devparms->triggeredgesource] = (((h / 2) - trig_level_arrow_pos) * ((devparms->chanscale[devparms->triggeredgesource] * devparms->vertdivisions) / h))
-                                                                - devparms->chanoffset[devparms->triggeredgesource];
+      devparms->triggeredgelevel[devparms->triggeredgesource] =
+          (((h / 2) - trig_level_arrow_pos) * ((devparms->chan[devparms->triggeredgesource].scale * devparms->vertdivisions) / h))
+                                                                - devparms->chan[devparms->triggeredgesource].offset;
 
-      dtmp = devparms->triggeredgelevel[devparms->triggeredgesource] / (devparms->chanscale[devparms->triggeredgesource] / 50);
+      dtmp = devparms->triggeredgelevel[devparms->triggeredgesource] / (devparms->chan[devparms->triggeredgesource].scale / 50);
 
-      devparms->triggeredgelevel[devparms->triggeredgesource] = (devparms->chanscale[devparms->triggeredgesource] / 50) * dtmp;
+      devparms->triggeredgelevel[devparms->triggeredgesource] = (devparms->chan[devparms->triggeredgesource].scale / 50) * dtmp;
 
       label_active = LABEL_ACTIVE_TRIG;
 
@@ -2127,7 +2106,7 @@ void SignalCurve::mouseMoveEvent(QMouseEvent *move_event)
     {
       for(chn=0; chn<devparms->channel_cnt; chn++)
       {
-        if(!devparms->chandisplay[chn])
+        if(!devparms->chan[chn].display)
         {
           continue;
         }
@@ -2146,15 +2125,16 @@ void SignalCurve::mouseMoveEvent(QMouseEvent *move_event)
             chan_arrow_pos[chn] = h;
           }
 
-          devparms->chanoffset[chn] = ((h / 2) - chan_arrow_pos[chn]) * ((devparms->chanscale[chn] * devparms->vertdivisions) / h);
+          devparms->chan[chn].offset = ((h / 2) - chan_arrow_pos[chn]) *
+                                        ((devparms->chan[chn].scale * devparms->vertdivisions) / h);
 
 //          chan_tmp_y_pixel_offset[chn] = (h / 2) - chan_arrow_pos[chn];
 
           chan_tmp_y_pixel_offset[chn] = chan_tmp_old_y_pixel_offset[chn] - chan_arrow_pos[chn];
 
-          dtmp = devparms->chanoffset[chn] / (devparms->chanscale[chn] / 50);
+          dtmp = devparms->chan[chn].offset / (devparms->chan[chn].scale / 50);
 
-          devparms->chanoffset[chn] = (devparms->chanscale[chn] / 50) * dtmp;
+          devparms->chan[chn].offset = (devparms->chan[chn].scale / 50) * dtmp;
 
           label_active = chn + 1;
 

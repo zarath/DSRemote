@@ -144,7 +144,7 @@ void save_data_thread::save_memory_edf_file(void)
   {
     for(chn=0; chn<MAX_CHNS; chn++)
     {
-      if(!devparms->chandisplay[chn])
+      if(!devparms->chan[chn].display)
       {
         continue;
       }

@@ -636,7 +636,7 @@ int UI_Mainwindow::get_device_settings(int delay)
 
   for(chn=0; chn<devparms.channel_cnt; chn++)
   {
-    if(devparms.chandisplay[chn] == 1)
+    if(devparms.chan[chn].display == 1)
     {
       switch(chn)
       {
@@ -2040,7 +2040,7 @@ void UI_Mainwindow::chan_scale_plus()
       }
       else
       {
-        sprintf(str, ":CALC:FFT:VSC %e", devparms.fft_vscale / devparms.chanscale[devparms.math_fft_src]);
+        sprintf(str, ":CALC:FFT:VSC %e", devparms.fft_vscale / devparms.chan[devparms.math_fft_src].scale);
 
         set_cue_cmd(str);
       }
@@ -2074,41 +2074,41 @@ void UI_Mainwindow::chan_scale_plus()
 
   chn = devparms.activechannel;
 
-  if(devparms.chanscale[chn] >= 20)
+  if(devparms.chan[chn].scale >= 20)
   {
-    devparms.chanscale[chn] = 20;
+    devparms.chan[chn].scale = 20;
 
     return;
   }
 
-  ltmp = devparms.chanscale[chn];
+  ltmp = devparms.chan[chn].scale;
 
-  val = round_up_step125(devparms.chanscale[chn], NULL);
+  val = round_up_step125(devparms.chan[chn].scale, NULL);
 
-  if(devparms.chanvernier[chn])
+  if(devparms.chan[chn].vernier)
   {
     val /= 100;
 
-    devparms.chanscale[chn] += val;
+    devparms.chan[chn].scale += val;
   }
   else
   {
-    devparms.chanscale[chn] = val;
+    devparms.chan[chn].scale = val;
   }
 
   ltmp /= val;
 
-  devparms.chanoffset[chn] /= ltmp;
+  devparms.chan[chn].offset /= ltmp;
 
   sprintf(str, "Channel %i scale: ", chn + 1);
 
-  convert_to_metric_suffix(str + strlen(str), devparms.chanscale[chn], 2);
+  convert_to_metric_suffix(str + strlen(str), devparms.chan[chn].scale, 2);
 
   strcat(str, "V");
 
   statusLabel->setText(str);
 
-  sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chanscale[chn]);
+  sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chan[chn].scale);
 
   set_cue_cmd(str);
 
@@ -2146,43 +2146,42 @@ void UI_Mainwindow::chan_scale_plus_all()
 
   for(chn=0; chn<devparms.channel_cnt; chn++)
   {
-    if(!devparms.chandisplay[chn])  continue;
-
-    if(devparms.chanscale[chn] >= 20)
+    if(!devparms.chan[chn].display)  continue;
+    if(devparms.chan[chn].scale >= 20)
     {
-      devparms.chanscale[chn] = 20;
+      devparms.chan[chn].scale = 20;
 
       return;
     }
 
-    ltmp = devparms.chanscale[chn];
+    ltmp = devparms.chan[chn].scale;
 
-    val = round_up_step125(devparms.chanscale[chn], NULL);
+    val = round_up_step125(devparms.chan[chn].scale, NULL);
 
-    if(devparms.chanvernier[chn])
+    if(devparms.chan[chn].vernier)
     {
       val /= 100;
 
-      devparms.chanscale[chn] += val;
+      devparms.chan[chn].scale += val;
     }
     else
     {
-      devparms.chanscale[chn] = val;
+      devparms.chan[chn].scale = val;
     }
 
     ltmp /= val;
 
-    devparms.chanoffset[chn] /= ltmp;
+    devparms.chan[chn].offset /= ltmp;
 
     sprintf(str, "Channel %i scale: ", chn + 1);
 
-    convert_to_metric_suffix(str + strlen(str), devparms.chanscale[chn], 2);
+    convert_to_metric_suffix(str + strlen(str), devparms.chan[chn].scale, 2);
 
     strcat(str, "V");
 
     statusLabel->setText(str);
 
-    sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chanscale[chn]);
+    sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chan[chn].scale);
 
     set_cue_cmd(str);
   }
@@ -2253,7 +2252,7 @@ void UI_Mainwindow::chan_scale_minus()
       }
       else
       {
-        sprintf(str, ":CALC:FFT:VSC %e", devparms.fft_vscale / devparms.chanscale[devparms.math_fft_src]);
+        sprintf(str, ":CALC:FFT:VSC %e", devparms.fft_vscale / devparms.chan[devparms.math_fft_src].scale);
 
         set_cue_cmd(str);
       }
@@ -2287,48 +2286,48 @@ void UI_Mainwindow::chan_scale_minus()
 
   chn = devparms.activechannel;
 
-  if(devparms.chanscale[chn] <= 1e-2)
+  if(devparms.chan[chn].scale <= 1e-2)
   {
-    devparms.chanscale[chn] = 1e-2;
+    devparms.chan[chn].scale = 1e-2;
 
     return;
   }
 
-  ltmp = devparms.chanscale[chn];
+  ltmp = devparms.chan[chn].scale;
 
-  if(devparms.chanvernier[chn])
+  if(devparms.chan[chn].vernier)
   {
-    val = round_up_step125(devparms.chanscale[chn], NULL);
+    val = round_up_step125(devparms.chan[chn].scale, NULL);
   }
   else
   {
-    val = round_down_step125(devparms.chanscale[chn], NULL);
+    val = round_down_step125(devparms.chan[chn].scale, NULL);
   }
 
-  if(devparms.chanvernier[chn])
+  if(devparms.chan[chn].vernier)
   {
     val /= 100;
 
-    devparms.chanscale[chn] -= val;
+    devparms.chan[chn].scale -= val;
   }
   else
   {
-    devparms.chanscale[chn] = val;
+    devparms.chan[chn].scale = val;
   }
 
   ltmp /= val;
 
-  devparms.chanoffset[chn] /= ltmp;
+  devparms.chan[chn].offset /= ltmp;
 
   sprintf(str, "Channel %i scale: ", chn + 1);
 
-  convert_to_metric_suffix(str + strlen(str), devparms.chanscale[chn], 2);
+  convert_to_metric_suffix(str + strlen(str), devparms.chan[chn].scale, 2);
 
   strcat(str, "V");
 
   statusLabel->setText(str);
 
-  sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chanscale[chn]);
+  sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chan[chn].scale);
 
   set_cue_cmd(str);
 
@@ -2366,50 +2365,50 @@ void UI_Mainwindow::chan_scale_minus_all()
 
   for(chn=0; chn<devparms.channel_cnt; chn++)
   {
-    if(!devparms.chandisplay[chn])  continue;
+    if(!devparms.chan[chn].display)  continue;
 
-    if(devparms.chanscale[chn] <= 1e-2)
+    if(devparms.chan[chn].scale <= 1e-2)
     {
-      devparms.chanscale[chn] = 1e-2;
+      devparms.chan[chn].scale = 1e-2;
 
       return;
     }
 
-    ltmp = devparms.chanscale[chn];
+    ltmp = devparms.chan[chn].scale;
 
-    if(devparms.chanvernier[chn])
+    if(devparms.chan[chn].vernier)
     {
-      val = round_up_step125(devparms.chanscale[chn], NULL);
+      val = round_up_step125(devparms.chan[chn].scale, NULL);
     }
     else
     {
-      val = round_down_step125(devparms.chanscale[chn], NULL);
+      val = round_down_step125(devparms.chan[chn].scale, NULL);
     }
 
-    if(devparms.chanvernier[chn])
+    if(devparms.chan[chn].vernier)
     {
       val /= 100;
 
-      devparms.chanscale[chn] -= val;
+      devparms.chan[chn].scale -= val;
     }
     else
     {
-      devparms.chanscale[chn] = val;
+      devparms.chan[chn].scale = val;
     }
 
     ltmp /= val;
 
-    devparms.chanoffset[chn] /= ltmp;
+    devparms.chan[chn].offset /= ltmp;
 
     sprintf(str, "Channel %i scale: ", chn + 1);
 
-    convert_to_metric_suffix(str + strlen(str), devparms.chanscale[chn], 2);
+    convert_to_metric_suffix(str + strlen(str), devparms.chan[chn].scale, 2);
 
     strcat(str, "V");
 
     statusLabel->setText(str);
 
-    sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chanscale[chn]);
+    sprintf(str, ":CHAN%i:SCAL %e", chn + 1, devparms.chan[chn].scale);
 
     set_cue_cmd(str);
   }
@@ -2492,20 +2491,20 @@ void UI_Mainwindow::shift_trace_up()
 
   chn = devparms.activechannel;
 
-  if(devparms.chanoffset[chn] >= 20)
+  if(devparms.chan[chn].offset >= 20)
   {
-    devparms.chanoffset[chn] = 20;
+    devparms.chan[chn].offset = 20;
 
     return;
   }
 
-  devparms.chanoffset[chn] += devparms.chanscale[chn];
+  devparms.chan[chn].offset += devparms.chan[chn].scale;
 
   sprintf(str, "Channel %i offset: ", chn + 1);
 
-  convert_to_metric_suffix(str + strlen(str), devparms.chanoffset[chn], 2);
+  convert_to_metric_suffix(str + strlen(str), devparms.chan[chn].offset, 2);
 
-  strcat(str, devparms.chanunitstr[devparms.chanunit[chn]]);
+  strcat(str, devparms.chan[devparms.chan[chn].unit].unitstr);
 
   statusLabel->setText(str);
 
@@ -2600,20 +2599,20 @@ void UI_Mainwindow::shift_trace_down()
 
   chn = devparms.activechannel;
 
-  if(devparms.chanoffset[chn] <= -20)
+  if(devparms.chan[chn].offset <= -20)
   {
-    devparms.chanoffset[chn] = -20;
+    devparms.chan[chn].offset = -20;
 
     return;
   }
 
-  devparms.chanoffset[chn] -= devparms.chanscale[chn];
+  devparms.chan[chn].offset -= devparms.chan[chn].scale;
 
   sprintf(str, "Channel %i offset: ", chn + 1);
 
-  convert_to_metric_suffix(str + strlen(str), devparms.chanoffset[chn], 2);
+  convert_to_metric_suffix(str + strlen(str), devparms.chan[chn].offset, 2);
 
-  strcat(str, devparms.chanunitstr[devparms.chanunit[chn]]);
+  strcat(str, devparms.chan[devparms.chan[chn].unit].unitstr);
 
   statusLabel->setText(str);
 
@@ -2654,26 +2653,18 @@ void UI_Mainwindow::set_to_factory()
 
   for(i=0; i<MAX_CHNS; i++)
   {
-    devparms.chanscale[i] = 1;
-
-    devparms.chanoffset[i] = 0;
-
-    devparms.chandisplay[i] = 0;
-
-    devparms.chancoupling[i] = 1;
-
-    devparms.chanbwlimit[i] = 0;
-
-    devparms.chanprobe[i] = 10;
-
-    devparms.chaninvert[i] = 0;
-
-    devparms.chanvernier[i] = 0;
-
+    devparms.chan[i].scale = 1;
+    devparms.chan[i].offset = 0;
+    devparms.chan[i].display = 0;
+    devparms.chan[i].coupling = 1;
+    devparms.chan[i].bwlimit = 0;
+    devparms.chan[i].probe = 10;
+    devparms.chan[i].invert = 0;
+    devparms.chan[i].vernier = false;
     devparms.triggeredgelevel[i] = 0;
   }
 
-  devparms.chandisplay[0] = 1;
+  devparms.chan[0].display= 1;
 
   devparms.activechannel = 0;
 
@@ -2872,7 +2863,7 @@ void UI_Mainwindow::screenUpdate()
 
   for(i=0; i<MAX_CHNS; i++)
   {
-    if(!devparms.chandisplay[i])  // Display data only when channel is switched on
+    if(!devparms.chan[i].display)  // Display data only when channel is switched on
     {
       continue;
     }
